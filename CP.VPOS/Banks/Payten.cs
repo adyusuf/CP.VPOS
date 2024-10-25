@@ -22,6 +22,59 @@ namespace CP.VPOS.Banks.Payten
 
         private readonly List<string> _onlineBankQuery = new List<string> { "ISBANK", "FINANS" };
 
+
+
+        //ZIRAATBANKKURUMSALKART
+        //Equal installments
+        //{
+        //  "ZIRAATBANKKURUMSALKART.KURUMSALKARTISLEMTIPI": "ESITTAKSITLISATIS",
+        //  "ZIRAATBANKKURUMSALKART.TAKSITVEYAVADESAYISI": "5",
+        //  "ZIRAATBANKKURUMSALKART.ODEMEPERIYODU": "2"
+        //}
+
+        //Flexible installments - up to 12 installments(MIKTAR_*, TARIH_*)
+        //{
+        //  "ZIRAATBANKKURUMSALKART.KURUMSALKARTISLEMTIPI": "ESNEKTAKSITLISATIS",
+        //  "ZIRAATBANKKURUMSALKART.TAKSITVEYAVADESAYISI": "3",
+        //  "ZIRAATBANKKURUMSALKART.MIKTAR_1": "100",
+        //  "ZIRAATBANKKURUMSALKART.TARIH_1": "20210916",
+        //  "ZIRAATBANKKURUMSALKART.MIKTAR_2": "50",
+        //  "ZIRAATBANKKURUMSALKART.TARIH_2": "20210916",
+        //  "ZIRAATBANKKURUMSALKART.MIKTAR_3": "50",
+        //  "ZIRAATBANKKURUMSALKART.TARIH_3": "20210916",
+        //}
+
+
+        string ziraatesit = "{"
+            + "\"ZIRAATBANKKURUMSALKART.KURUMSALKARTISLEMTIPI\": \"ESITTAKSITLISATIS\","
+            + "\"ZIRAATBANKKURUMSALKART.TAKSITVEYAVADESAYISI\": \"5\","
+            + "\"ZIRAATBANKKURUMSALKART.ODEMEPERIYODU\": \"2\","
+            + "}";
+        string ziraatesnek = "{"
+            + "\"ZIRAATBANKKURUMSALKART.KURUMSALKARTISLEMTIPI\": \"ESNEKTAKSITLISATIS\","
+            + "\"ZIRAATBANKKURUMSALKART.TAKSITVEYAVADESAYISI\": \"3\","
+            + "\"ZIRAATBANKKURUMSALKART.MIKTAR_1\": \"100\","
+            + "\"ZIRAATBANKKURUMSALKART.TARIH_1\": \"20210916\","
+            + "\"ZIRAATBANKKURUMSALKART.MIKTAR_2\": \"50\","
+            + "\"ZIRAATBANKKURUMSALKART.TARIH_2\": \"20210916\","
+            + "\"ZIRAATBANKKURUMSALKART.MIKTAR_3\": \"50\","
+            + "\"ZIRAATBANKKURUMSALKART.TARIH_3\": \"20210916\","
+            + "}";
+        string imece = "{"
+            + "\"IMCKOD\": \"----------\","
+            + "\"FDONEM\": \"-------------\","
+            + "}";
+
+        //  "extra":"{ \"IMCKOD\" : \"---------\", \"FDONEM" : "---------------\" }"
+        //  "extra":"{ \"IMCKOD\" : \"---------\", \"FDONEM" : "---------------\" }"
+
+        //  "extra":"{\"SPEXPIRATIONTIME\":\"1m\",\"SPEXACTMATCH\":\"true\",\"SPCODE\":\"SP-SPLIT-68-TEST\",\"SPTOTALAMOUNT\":250.00,\"SPMAXSPLITCOUNT\":3,\"SPPERSONALMAXINST\":12,\"SPGROUPNUMBER\":\"SPLIT\",\"SPBUSINESSMAXINST\":12}"
+        //  "extra":{ "ForceSave" : "NO" } 
+        //  "extra":"{\"COMPAY.TRANSFER\":\"YES\"}",
+        //  "extra":"{"GARANTI_LOAN.Category":"1301-1299-1002","GARANTI_LOAN.Platform":"W","GARANTI_LOAN.Campaign":"V4","GARANTI_LOAN.Address":"Orta yol merkez mah."}"
+        //  "extra":"{"KUVEYTTURK_LOAN.ORDERITEMS":"[{"unitPrice":"1500","count":"1","categoryCode":"1103"},{"unitPrice":"1300","count":"1","categoryCode":"1102"}]","KUVEYTTURK_LOAN.channel":"WM","KUVEYTTURK_LOAN.orderItemCount":"2","KUVEYTTURK_LOAN.softDescriptor":"Financing transaction information","KUVEYTTURK_LOAN.commissionAmount":"0"}",
+
+
         public SaleResponse Sale(SaleRequest request, VirtualPOSAuth auth)
         {
             if (request?.payment3D?.confirm == true)
