@@ -171,6 +171,7 @@ namespace CP.VPOS.Banks.IQmoney
             if (string.IsNullOrWhiteSpace(surname))
                 surname = "[boş]";
 
+            var threedtype = request.payment3D.ThreeDMode == ThreeDMode.ThreeDPay ? "merchant" : "app";
 
             Dictionary<string, object> req = new Dictionary<string, object> {
                 {"cc_holder_name", request.saleInfo.cardNameSurname },
@@ -199,7 +200,7 @@ namespace CP.VPOS.Banks.IQmoney
                 }},
                 {"hash_key", "" },
                 {"response_method", "POST" },
-                {"payment_completed_by", "app" },
+                {"payment_completed_by", threedtype },
                 {"ip", request.customerIPAddress },
                 {"cancel_url", request.payment3D.returnURL },
                 {"return_url", request.payment3D.returnURL },

@@ -89,6 +89,14 @@ namespace CP.VPOS.Models
         public string returnURL { get; set; }
 
         /// <summary>
+        /// 3D ödeme tipi 
+        /// None: 3D doğrulama yapılamaz 
+        /// ThreeD: 3D dOğrulama başarılı olursa, Sale3DResponse yapmak gerekir 
+        /// ThreeDPay: 3D dOğrulama başarılı olursa, Sale3DResponse yapmaya gerek kalmadan para otomatik çekilir 
+        /// </summary>
+        public ThreeDMode ThreeDMode { get; set; } = ThreeDMode.ThreeDPay;
+
+        /// <summary>
         /// Masaüstünde kullanıyorsanız true yapmanız gerekir. Masaüstünde PORT açılır ve response beklenir. 
         /// </summary>
         public bool isDesktop { get; set; }

@@ -159,12 +159,14 @@ namespace CP.VPOS.Banks.GarantiBBVA
         {
             SaleResponse response = null;
 
+            var threedtype = request.payment3D.ThreeDMode == ThreeDMode.ThreeDPay ? "3D" : "3D_PAY";
+
             Dictionary<string, string> param = new Dictionary<string, string>
             {
                 { "mode", auth.testPlatform ? "TEST" : "PROD"},
                 { "apiversion", "v0.01" },
                 { "version", "v0.01" },
-                { "secure3dsecuritylevel", "3D" },
+                { "secure3dsecuritylevel", threedtype },
 
                 { "terminalprovuserid", "PROVAUT" },
                 { "terminaluserid", "PROVAUT" },

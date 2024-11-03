@@ -86,6 +86,8 @@ namespace CP.VPOS.Banks.Denizbank
             SaleResponse response = new SaleResponse();
             response.orderNumber = request.orderNumber;
 
+            var threedtype = request.payment3D.ThreeDMode == ThreeDMode.ThreeDPay ? "3DPay" : "3D";
+
             Dictionary<string, string> req = new Dictionary<string, string> {
                 {"ShopCode", auth.merchantID },
                 {"PurchAmount", request.saleInfo.amount.ToString("N2", CultureInfo.GetCultureInfo("tr-TR")).Replace(".", "").Replace(",", ".") },
@@ -96,7 +98,7 @@ namespace CP.VPOS.Banks.Denizbank
                 {"Rnd", Guid.NewGuid().ToString().Replace("-", "")},
                 {"TxnType", "Auth" },
                 {"InstallmentCount", (request.saleInfo.installment > 1 ? request.saleInfo.installment.ToString() : "0") },
-                {"SecureType", "3DPay" },
+                {"SecureType", threedtype },
                 {"Pan", request.saleInfo.cardNumber},
                 {"Cvv2",request.saleInfo.cardCVV},
                 {"Expiry", request.saleInfo.cardExpiryDateMonth.ToString("00") + request.saleInfo.cardExpiryDateYear.ToString().Substring(2)},

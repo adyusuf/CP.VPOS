@@ -397,6 +397,7 @@ namespace CP.VPOS.Banks.Payten
             return response;
         }
 
+        //3D
         private SaleResponse Sale3D(SaleRequest request, VirtualPOSAuth auth)
         {
             string sessionToken = "";

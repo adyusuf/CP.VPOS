@@ -168,8 +168,9 @@ namespace CP.VPOS.Banks.Sipay
 			if (string.IsNullOrWhiteSpace(surname))
 				surname = "[boş]";
 
+            var threedtype = request.payment3D.ThreeDMode == ThreeDMode.ThreeDPay ? "merchant" : "app";
 
-			Dictionary<string, object> req = new Dictionary<string, object> {
+            Dictionary<string, object> req = new Dictionary<string, object> {
 				{"cc_holder_name", request.saleInfo.cardNameSurname },
 				{"cc_no", request.saleInfo.cardNumber},
 				{"expiry_month", request.saleInfo.cardExpiryDateMonth.cpToString() },
@@ -196,7 +197,7 @@ namespace CP.VPOS.Banks.Sipay
 				}},
 				{"hash_key", "" },
 				{"response_method", "POST" },
-				{"payment_completed_by", "app" },
+				{"payment_completed_by", threedtype },
 				{"ip", request.customerIPAddress },
 				{"cancel_url", request.payment3D.returnURL },
 				{"return_url", request.payment3D.returnURL },
