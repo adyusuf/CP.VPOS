@@ -92,7 +92,7 @@ namespace CP.VPOS.Banks.QNBFinansbank
             SaleResponse response = new SaleResponse();
             response.orderNumber = request.orderNumber;
 
-            var threedtype = request.payment3D.ThreeDMode == ThreeDMode.ThreeDPay ? "3D" : "3DPay";
+            var threedmode = request.payment3D.threeDMode == ThreeDMode.ThreeDPay ? "3D" : "3DPay";
 
             Dictionary<string, string> req = new Dictionary<string, string> {
                 {"MbrId", "5" }, //TODO: Değişkenlik gösterebilir
@@ -106,7 +106,7 @@ namespace CP.VPOS.Banks.QNBFinansbank
                 {"FailUrl", request.payment3D.returnURL },
                 {"TxnType", "Auth" },
                 {"InstallmentCount", (request.saleInfo.installment > 1 ? request.saleInfo.installment.ToString() : "0") },
-                {"SecureType", threedtype },
+                {"SecureType", threedmode },
                 {"Pan", request.saleInfo.cardNumber},
                 {"Cvv2",request.saleInfo.cardCVV},
                 {"Expiry", request.saleInfo.cardExpiryDateMonth.ToString("00") + request.saleInfo.cardExpiryDateYear.ToString().Substring(2)},

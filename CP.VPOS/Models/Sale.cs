@@ -94,7 +94,7 @@ namespace CP.VPOS.Models
         /// ThreeD: 3D dOğrulama başarılı olursa, Sale3DResponse yapmak gerekir 
         /// ThreeDPay: 3D dOğrulama başarılı olursa, Sale3DResponse yapmaya gerek kalmadan para otomatik çekilir 
         /// </summary>
-        public ThreeDMode ThreeDMode { get; set; } = ThreeDMode.ThreeDPay;
+        public ThreeDMode threeDMode { get; set; } = ThreeDMode.ThreeDPay;
 
         /// <summary>
         /// Masaüstünde kullanıyorsanız true yapmanız gerekir. Masaüstünde PORT açılır ve response beklenir. 

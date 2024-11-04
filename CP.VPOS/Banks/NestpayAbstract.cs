@@ -213,7 +213,7 @@ namespace CP.VPOS.Banks
 
             string installment = request.saleInfo.installment > 1 ? request.saleInfo.installment.ToString() : "";
 
-            var threedtype = request.payment3D.ThreeDMode == ThreeDMode.ThreeDPay ? "3d" : "3d_pay";
+            var threedmode = request.payment3D.threeDMode == ThreeDMode.ThreeDPay ? "3d" : "3d_pay";
 
             Dictionary<string, string> param = new Dictionary<string, string>()
             {
@@ -227,7 +227,7 @@ namespace CP.VPOS.Banks
                 { "okUrl", request.payment3D.returnURL },
                 { "failUrl", request.payment3D.returnURL },
                 { "rnd", Helpers.FoundationHelper.time().ToString()},
-                { "storetype", threedtype },
+                { "storetype", threedmode },
                 { "lang", "tr" },
                 { "currency", ((int)request.saleInfo.currency).ToString() },
                 { "installment", installment },

@@ -171,7 +171,7 @@ namespace CP.VPOS.Banks.PayBull
             if (string.IsNullOrWhiteSpace(surname))
                 surname = "[boş]";
 
-            var threedtype = request.payment3D.ThreeDMode == ThreeDMode.ThreeDPay ? "merchant" : "app";
+            var threedmode = request.payment3D.threeDMode == ThreeDMode.ThreeDPay ? "merchant" : "app";
 
             Dictionary<string, object> req = new Dictionary<string, object> {
                 {"cc_holder_name", request.saleInfo.cardNameSurname },
@@ -200,7 +200,7 @@ namespace CP.VPOS.Banks.PayBull
                 }},
                 {"hash_key", "" },
                 {"response_method", "POST" },
-                {"payment_completed_by", threedtype },
+                {"payment_completed_by", threedmode },
                 {"ip", request.customerIPAddress },
                 {"cancel_url", request.payment3D.returnURL },
                 {"return_url", request.payment3D.returnURL },
