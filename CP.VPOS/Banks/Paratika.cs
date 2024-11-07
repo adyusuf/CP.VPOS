@@ -678,5 +678,10 @@ namespace CP.VPOS.Banks.Paratika
 
             return desc;
         }
+
+        public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

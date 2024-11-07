@@ -213,7 +213,7 @@ namespace CP.VPOS.Banks
 
             string installment = request.saleInfo.installment > 1 ? request.saleInfo.installment.ToString() : "";
 
-            var threedmode = request.payment3D.threeDMode == ThreeDMode.ThreeDPay ? "3d" : "3d_pay";
+            var threedmode = request.payment3D.threeDMode == ThreeDMode.ThreeDPay ? "3d_pay" : "3d";
 
             Dictionary<string, string> param = new Dictionary<string, string>()
             {
@@ -315,6 +315,11 @@ namespace CP.VPOS.Banks
             string gelenXml = responsereader.ReadToEnd();
 
             return gelenXml;
+        }
+
+        public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
         }
     }
 }

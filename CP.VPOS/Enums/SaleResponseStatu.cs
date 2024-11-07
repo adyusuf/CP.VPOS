@@ -7,5 +7,6 @@ namespace CP.VPOS.Enums
         Success = 1,
         RedirectURL = 2,
         RedirectHTML = 3,
+        Pending = 4,
     }
 }

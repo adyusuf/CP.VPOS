@@ -745,5 +745,10 @@ namespace CP.VPOS.Banks.Vakifbank
 
             return errMsg;
         }
+
+        public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

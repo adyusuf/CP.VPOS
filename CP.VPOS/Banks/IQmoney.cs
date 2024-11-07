@@ -171,7 +171,7 @@ namespace CP.VPOS.Banks.IQmoney
             if (string.IsNullOrWhiteSpace(surname))
                 surname = "[boş]";
 
-            var threedmode = request.payment3D.threeDMode == ThreeDMode.ThreeDPay ? "merchant" : "app";
+            var threedmode = request.payment3D.threeDMode == ThreeDMode.ThreeDPay ? "app" : "merchant";
 
             Dictionary<string, object> req = new Dictionary<string, object> {
                 {"cc_holder_name", request.saleInfo.cardNameSurname },
@@ -737,6 +737,10 @@ namespace CP.VPOS.Banks.IQmoney
             }
         }
 
+        public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using CP.VPOS.Enums;
 using CP.VPOS.Helpers;
 using CP.VPOS.Interfaces;
 using CP.VPOS.Models;
 using CP.VPOS.Services;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 
@@ -62,6 +64,65 @@ namespace CP.VPOS
 
             return vPOSService.Sale(request, auth);
         }
+
+        /// <summary>
+        /// 3D yapılan çekim işlemi onaylanır
+        /// </summary>
+        /// <param name="request"></param>
+        public static SaleResponse Commit(Sale3DResponseRequest request, VirtualPOSAuth auth)
+        {
+            request.Validate();
+            auth.Validate();
+
+            if (auth.bankCode == "0067") // YapıKredi Bankası
+            {
+                if (request.currency == null)
+                    throw new ValidationException("currency alanı Yapı Kredi bankası için zorunludur");
+            }
+
+            try
+            {
+                Dictionary<string, object> _responseArray = request.responseArray;
+
+                foreach (KeyValuePair<string, object> item in _responseArray)
+                {
+                    if (item.Value != null && item.Value.GetType().Name == "JArray")
+                    {
+                        JArray jArray = item.Value as JArray;
+
+                        _responseArray[item.Key] = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(jArray.First));
+                    }
+                }
+                request.responseArray = _responseArray;
+            }
+            catch
+            {
+
+            }
+
+            IVirtualPOSService vPOSService = GetVirtualPOSService(auth.bankCode);
+
+            var saleResponse = vPOSService.Sale3DResponse(request, auth);
+            if (saleResponse.statu == SaleResponseStatu.Pending && saleResponse.mdStatus == "1")
+            {
+                var commitRequest = new CommitRequest
+                {
+                    amount = request.amount,
+                    currency = request.currency,
+                    installment = request.installment,
+                    orderId = saleResponse.orderId,
+                    orderNumber = saleResponse.orderNumber,
+                };
+                return vPOSService.Commit(commitRequest, auth);
+            }
+            else
+            {
+                saleResponse.statu = SaleResponseStatu.Error;
+                saleResponse.message = "3D doğrulama yapılamadı";
+                return saleResponse;
+            }
+        }
+
 
         /// <summary>
         /// 3D yapılan çekim işlemi sonucunu döner

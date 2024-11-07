@@ -425,5 +425,10 @@ namespace CP.VPOS.Banks.ParamPos
 
             return gelenXml;
         }
+
+        public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

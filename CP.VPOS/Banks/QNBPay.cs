@@ -737,6 +737,10 @@ namespace CP.VPOS.Banks.QNBpay
             }
         }
 
+        public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 

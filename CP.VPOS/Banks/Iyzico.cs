@@ -356,5 +356,10 @@ namespace CP.VPOS.Banks.Iyzico
 
             return options;
         }
+
+        public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

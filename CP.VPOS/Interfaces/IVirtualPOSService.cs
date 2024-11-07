@@ -1,4 +1,5 @@
-﻿using CP.VPOS.Models;
+﻿using CP.VPOS.Enums;
+using CP.VPOS.Models;
 
 namespace CP.VPOS.Interfaces
 {
@@ -11,6 +12,14 @@ namespace CP.VPOS.Interfaces
         /// <param name="auth"></param>
         /// <returns></returns>
         SaleResponse Sale(SaleRequest request, VirtualPOSAuth auth);
+
+        /// <summary>
+        ///  3D Çekimlerin sonuçları için kullanılır
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="auth"></param>
+        /// <returns></returns>
+        SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth);
 
         /// <summary>
         ///  3D Çekimlerin sonuçları için kullanılır

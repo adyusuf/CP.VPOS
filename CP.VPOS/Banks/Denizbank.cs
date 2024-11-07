@@ -313,5 +313,10 @@ namespace CP.VPOS.Banks.Denizbank
 
             return responseString;
         }
+
+        public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -912,5 +912,10 @@ namespace CP.VPOS.Banks.Payten
                 return null;
             }
         }
+
+        public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

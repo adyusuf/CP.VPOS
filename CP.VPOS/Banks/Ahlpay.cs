@@ -334,7 +334,12 @@ namespace CP.VPOS.Banks.Ahlpay
 
 			return hash;
 		}
-	}
+
+        public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 	internal class AhlpayTokenModel
 	{

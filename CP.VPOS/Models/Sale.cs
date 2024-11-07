@@ -66,9 +66,19 @@ namespace CP.VPOS.Models
         public string orderNumber { get; set; }
 
         /// <summary>
+        ///  Sipariş Numarası, (Sipay'dan gelen)
+        /// </summary>
+        public string orderId { get; set; }
+
+        /// <summary>
         /// Banka tarafındaki işlem numarası. iptal, iade işlemlerinde kullanılır. İptal, iade yapabilmeniz için kaydetmeniz gerekir.
         /// </summary>
         public string transactionId { get; set; }
+
+        /// <summary>
+        /// 3D kart doğrulama sonucu
+        /// </summary>
+        public string mdStatus { get; set; }
 
         /// <summary>
         /// Bankalardan verilen cevapların ham datası
@@ -109,6 +119,11 @@ namespace CP.VPOS.Models
         /// </summary>
         [Required(ErrorMessage = "responseArray alanı zorunludur")]
         public Dictionary<string, object> responseArray { get; set; }
+
+        /// <summary>
+        /// Yapı kredi bankası için bu alan zorunludur
+        /// </summary>
+        public int? installment { get; set; }
 
         /// <summary>
         /// Yapı kredi bankası için bu alan zorunludur

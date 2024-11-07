@@ -159,7 +159,7 @@ namespace CP.VPOS.Banks.GarantiBBVA
         {
             SaleResponse response = null;
 
-            var threedmode = request.payment3D.threeDMode == ThreeDMode.ThreeDPay ? "3D" : "3D_PAY";
+            var threedmode = request.payment3D.threeDMode == ThreeDMode.ThreeDPay ? "3D_PAY" : "3D";
 
             Dictionary<string, string> param = new Dictionary<string, string>
             {
@@ -559,6 +559,11 @@ namespace CP.VPOS.Banks.GarantiBBVA
             }
 
             return returnSrting;
+        }
+
+        public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
         }
     }
 

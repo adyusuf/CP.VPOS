@@ -92,7 +92,7 @@ namespace CP.VPOS.Banks.QNBFinansbank
             SaleResponse response = new SaleResponse();
             response.orderNumber = request.orderNumber;
 
-            var threedmode = request.payment3D.threeDMode == ThreeDMode.ThreeDPay ? "3D" : "3DPay";
+            var threedmode = request.payment3D.threeDMode == ThreeDMode.ThreeDPay ? "3DPay" : "3D";
 
             Dictionary<string, string> req = new Dictionary<string, string> {
                 {"MbrId", "5" }, //TODO: Değişkenlik gösterebilir
@@ -559,6 +559,11 @@ namespace CP.VPOS.Banks.QNBFinansbank
                 desc = $"({ErrorCode}) - {desc}";
 
             return desc;
+        }
+
+        public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
         }
     }
 

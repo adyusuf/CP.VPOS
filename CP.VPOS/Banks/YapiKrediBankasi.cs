@@ -350,6 +350,11 @@ $@"<?xml version=""1.0"" encoding=""ISO-8859-9""?>
         {
             return null;
         }
+
+        public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     static class helper
