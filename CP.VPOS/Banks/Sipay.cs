@@ -268,11 +268,17 @@ namespace CP.VPOS.Banks.Sipay
                 response.statu = SaleResponseStatu.Success;
                 response.message = "İşlem başarılı";
             }
-            //Pending
+            //3d Pending
             else if (request?.responseArray?.ContainsKey("status_code") == true && request.responseArray["status_code"].ToString() == "69")
             {
                 response.statu = SaleResponseStatu.Pending;
                 response.message = "İşlem henüz tamamlanmadı";
+            }
+            //3d cancel
+            else if (request?.responseArray?.ContainsKey("status_code") == true && request.responseArray["status_code"].ToString() == "41")
+            {
+                response.statu = SaleResponseStatu.Error;
+                response.message = "3D doğrulama iptal edildi";
             }
             else if (request?.responseArray?.ContainsKey("error") == true && request.responseArray["error"].ToString() != "")
             {
@@ -308,13 +314,6 @@ namespace CP.VPOS.Banks.Sipay
                 return response;
             }
 
-            //merchant_key	required	string	Sipayden almış olduğunuz ve size özel merchant_key değeri
-            //invoice_id	required	string	Üye işyeri tarafından gönderilen benzersiz sipariş numarası
-            //order_id		required	string
-            //status		required	string	status "complete" veya "cancel" olmalıdır, Complete satın alma işlemini tamamlayacaktır, Cancel ödemeyi doğrudan iptal edecektir,
-            //hash_key		required	string	Giriş değeri kullanılarak üretilmesi gereken benzersiz bir anahtardır
-
-
             Dictionary<string, object> req = new Dictionary<string, object> {
                 {"merchant_key", auth.merchantStorekey },
                 {"invoice_id", request.orderNumber },
@@ -322,13 +321,8 @@ namespace CP.VPOS.Banks.Sipay
                 {"status", "complete" },
                 {"hash_key", "" }
             };
-            string totalStr = request.amount?.ToString("N2", CultureInfo.GetCultureInfo("tr-TR")).Replace(".", "").Replace(",", ".");
-            string installmentStr = request.installment?.ToString();
-
-            //string hash_key = GenerateHashKey(totalStr, installmentStr, request.currency?.ToString(), auth.merchantStorekey, request.orderNumber, auth.merchantPassword);
 
             var s = auth.merchantStorekey + "|" + request.orderNumber + "|" + request.orderId + "|" + "complete";
-
 
             string hash_key = GenerateHashKey(s, auth.merchantPassword);
 
@@ -359,7 +353,7 @@ namespace CP.VPOS.Banks.Sipay
             else
             {
                 response.statu = SaleResponseStatu.Error;
-                response.message = "İşlem iade edilemedi";
+                response.message = "İşlem tamamlanamadı";
             }
 
             return response;

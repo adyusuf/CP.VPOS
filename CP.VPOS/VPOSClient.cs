@@ -107,9 +107,6 @@ namespace CP.VPOS
             {
                 var commitRequest = new CommitRequest
                 {
-                    amount = request.amount,
-                    currency = request.currency,
-                    installment = request.installment,
                     orderId = saleResponse.orderId,
                     orderNumber = saleResponse.orderNumber,
                 };

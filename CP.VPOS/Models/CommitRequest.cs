@@ -11,8 +11,5 @@ namespace CP.VPOS.Models
     {
         public string orderNumber { get; set; }
         public string orderId { get; set; }
-        public decimal? amount { get; set; }
-        public int? installment { get; set; }
-        public Currency? currency { get; set; }
     }
 }
