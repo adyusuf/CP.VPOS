@@ -1,5 +1,5 @@
-﻿using System;
-using CP.VPOS.Infrastructures.Iyzico.Request;
+﻿using CP.VPOS.Infrastructures.Iyzico.Request;
+using System;
 
 namespace CP.VPOS.Infrastructures.Iyzico.Model
 {

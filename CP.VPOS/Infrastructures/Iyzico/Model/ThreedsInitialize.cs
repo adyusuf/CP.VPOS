@@ -1,6 +1,6 @@
-﻿using System;
+﻿using CP.VPOS.Infrastructures.Iyzico.Request;
 using Newtonsoft.Json;
-using CP.VPOS.Infrastructures.Iyzico.Request;
+using System;
 
 namespace CP.VPOS.Infrastructures.Iyzico.Model
 {

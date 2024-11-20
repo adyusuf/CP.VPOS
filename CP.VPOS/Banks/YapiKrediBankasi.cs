@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -310,7 +309,7 @@ $@"<?xml version=""1.0"" encoding=""ISO-8859-9""?>
             using (var ykbRequest = new FormUrlEncodedContent(param))
             {
                 var response = client.PostAsync(link, ykbRequest).Result;
-                
+
                 try
                 {
                     responseString = response.Content.ReadAsStringAsync().Result;

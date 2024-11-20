@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace CP.VPOS.Infrastructures.Iyzico
 {
@@ -26,33 +25,33 @@ namespace CP.VPOS.Infrastructures.Iyzico
 
         public T Get<T>(String url)
         {
-            HttpResponseMessage httpResponseMessage = HttpClient.GetAsync(url).Result; 
+            HttpResponseMessage httpResponseMessage = HttpClient.GetAsync(url).Result;
             return JsonConvert.DeserializeObject<T>(httpResponseMessage.Content.ReadAsStringAsync().Result);
         }
-        
-        public T Get<T>(String url, Dictionary<string,string> headers)
+
+        public T Get<T>(String url, Dictionary<string, string> headers)
         {
             HttpRequestMessage requestMessage = new HttpRequestMessage
             {
-                Method = HttpMethod.Get, 
+                Method = HttpMethod.Get,
                 RequestUri = new Uri(url)
             };
-            
+
             foreach (var header in headers)
             {
                 requestMessage.Headers.Add(header.Key, header.Value);
             }
-            
-            HttpResponseMessage httpResponseMessage = HttpClient.SendAsync(requestMessage).Result; 
+
+            HttpResponseMessage httpResponseMessage = HttpClient.SendAsync(requestMessage).Result;
             return JsonConvert.DeserializeObject<T>(httpResponseMessage.Content.ReadAsStringAsync().Result);
         }
 
-        public T Post<T>(String url, Dictionary<string,string> headers, BaseRequest request)
-        { 
+        public T Post<T>(String url, Dictionary<string, string> headers, BaseRequest request)
+        {
             HttpRequestMessage requestMessage = new HttpRequestMessage
             {
-                Method = HttpMethod.Post, 
-                RequestUri = new Uri(url), 
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(url),
                 Content = JsonBuilder.ToJsonString(request)
             };
 
@@ -66,7 +65,7 @@ namespace CP.VPOS.Infrastructures.Iyzico
         }
 
         public T Delete<T>(String url, Dictionary<string, string> headers, BaseRequest request)
-        { 
+        {
             HttpRequestMessage requestMessage = new HttpRequestMessage
             {
                 Method = HttpMethod.Delete,
@@ -79,7 +78,7 @@ namespace CP.VPOS.Infrastructures.Iyzico
                 requestMessage.Headers.Add(header.Key, header.Value);
             }
 
-            HttpResponseMessage httpResponseMessage = HttpClient.SendAsync(requestMessage).Result; 
+            HttpResponseMessage httpResponseMessage = HttpClient.SendAsync(requestMessage).Result;
             return JsonConvert.DeserializeObject<T>(httpResponseMessage.Content.ReadAsStringAsync().Result);
         }
 
@@ -87,8 +86,8 @@ namespace CP.VPOS.Infrastructures.Iyzico
         {
             HttpRequestMessage requestMessage = new HttpRequestMessage
             {
-                Method = HttpMethod.Put, 
-                RequestUri = new Uri(url), 
+                Method = HttpMethod.Put,
+                RequestUri = new Uri(url),
                 Content = JsonBuilder.ToJsonString(request)
             };
 
@@ -97,7 +96,7 @@ namespace CP.VPOS.Infrastructures.Iyzico
                 requestMessage.Headers.Add(header.Key, header.Value);
             }
 
-            HttpResponseMessage httpResponseMessage = HttpClient.SendAsync(requestMessage).Result; 
+            HttpResponseMessage httpResponseMessage = HttpClient.SendAsync(requestMessage).Result;
             return JsonConvert.DeserializeObject<T>(httpResponseMessage.Content.ReadAsStringAsync().Result);
         }
     }

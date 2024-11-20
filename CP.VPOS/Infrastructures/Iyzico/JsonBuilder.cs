@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Text;
-using System;
 
 namespace CP.VPOS.Infrastructures.Iyzico
 {

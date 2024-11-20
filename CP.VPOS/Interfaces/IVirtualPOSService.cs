@@ -1,5 +1,4 @@
-﻿using CP.VPOS.Enums;
-using CP.VPOS.Models;
+﻿using CP.VPOS.Models;
 
 namespace CP.VPOS.Interfaces
 {

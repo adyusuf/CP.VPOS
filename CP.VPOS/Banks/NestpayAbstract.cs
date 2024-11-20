@@ -1,13 +1,13 @@
-﻿using CP.VPOS.Models;
+﻿using CP.VPOS.Enums;
+using CP.VPOS.Helpers;
 using CP.VPOS.Interfaces;
+using CP.VPOS.Models;
 using System;
 using System.Collections.Generic;
-using CP.VPOS.Enums;
-using CP.VPOS.Helpers;
-using System.Net;
-using System.Net.Http;
 using System.Globalization;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 
 namespace CP.VPOS.Banks

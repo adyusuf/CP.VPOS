@@ -1,17 +1,14 @@
 ﻿using CP.VPOS.Enums;
 using CP.VPOS.Helpers;
+using CP.VPOS.Infrastructures.Iyzico;
+using CP.VPOS.Infrastructures.Iyzico.Model;
+using CP.VPOS.Infrastructures.Iyzico.Request;
 using CP.VPOS.Interfaces;
 using CP.VPOS.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using CP.VPOS.Infrastructures.Iyzico;
-using CP.VPOS.Infrastructures.Iyzico.Request;
-using CP.VPOS.Infrastructures.Iyzico.Model;
 
 namespace CP.VPOS.Banks.Iyzico
 {

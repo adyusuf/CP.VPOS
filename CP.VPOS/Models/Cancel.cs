@@ -23,7 +23,7 @@ namespace CP.VPOS.Models
         /// </summary>
         [Required(ErrorMessage = "transactionId alanı zorunludur")]
         public string transactionId { get; set; }
-  
+
         /// <summary>
         /// İptal edilecek tutar para birimi, default = TRY
         /// </summary>

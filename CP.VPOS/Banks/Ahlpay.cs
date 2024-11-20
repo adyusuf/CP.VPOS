@@ -1,339 +1,337 @@
-﻿using System;
+﻿using CP.VPOS.Enums;
+using CP.VPOS.Helpers;
+using CP.VPOS.Interfaces;
+using CP.VPOS.Models;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
-using CP.VPOS.Enums;
-using CP.VPOS.Helpers;
-using CP.VPOS.Interfaces;
-using CP.VPOS.Models;
 
 namespace CP.VPOS.Banks.Ahlpay
 {
-	internal class AhlpayVirtualPOSService : IVirtualPOSService
-	{
-		private readonly string _urlAPITest = "https://testahlsanalpos.ahlpay.com.tr";
-		private readonly string _urlAPILive = "https://ahlsanalpos.ahlpay.com.tr";
+    internal class AhlpayVirtualPOSService : IVirtualPOSService
+    {
+        private readonly string _urlAPITest = "https://testahlsanalpos.ahlpay.com.tr";
+        private readonly string _urlAPILive = "https://ahlsanalpos.ahlpay.com.tr";
 
-
-		public SaleResponse Sale(SaleRequest request, VirtualPOSAuth auth)
-		{
-			SaleResponse response = new SaleResponse();
-
-			request.saleInfo.currency = request.saleInfo.currency ?? Currency.TRY;
-			request.saleInfo.installment = request.saleInfo.installment > 1 ? request.saleInfo.installment : (sbyte)1;
 
-			if (request?.payment3D?.confirm == true)
-				return Sale3D(request, auth);
+        public SaleResponse Sale(SaleRequest request, VirtualPOSAuth auth)
+        {
+            SaleResponse response = new SaleResponse();
 
-			response.orderNumber = request.orderNumber;
-
-			AhlpayTokenModel _token = null;
+            request.saleInfo.currency = request.saleInfo.currency ?? Currency.TRY;
+            request.saleInfo.installment = request.saleInfo.installment > 1 ? request.saleInfo.installment : (sbyte)1;
 
-			try
-			{
-				_token = GetTokenModel(auth);
-			}
-			catch (Exception ex)
-			{
-				response.statu = SaleResponseStatu.Error;
-				response.message = ex.Message;
+            if (request?.payment3D?.confirm == true)
+                return Sale3D(request, auth);
 
-				return response;
-			}
-
-			string totalStr = request.saleInfo.amount.ToString("N2", CultureInfo.GetCultureInfo("tr-TR")).Replace(".", "").Replace(",", ".");
-			string installmentStr = request.saleInfo.installment.ToString();
-
-			string name = request.invoiceInfo?.name;
-			string surname = request.invoiceInfo?.surname;
-
-			if (string.IsNullOrWhiteSpace(name))
-				name = "[boş]";
+            response.orderNumber = request.orderNumber;
 
-			if (string.IsNullOrWhiteSpace(surname))
-				surname = "[boş]";
+            AhlpayTokenModel _token = null;
 
-			int _memberId = 1;
-
-			string _rnd = Guid.NewGuid().ToString();
+            try
+            {
+                _token = GetTokenModel(auth);
+            }
+            catch (Exception ex)
+            {
+                response.statu = SaleResponseStatu.Error;
+                response.message = ex.Message;
 
-			Dictionary<string, object> req = new Dictionary<string, object> {
-				{"cardNumber", request.saleInfo.cardNumber},
-				{"expiryDateMonth", request.saleInfo.cardExpiryDateMonth.ToString("00") },
-				{"expiryDateYear", request.saleInfo.cardExpiryDateYear.cpToString() },
-				{"cvv", request.saleInfo.cardCVV},
-				{"cardHolderName", request.saleInfo.cardNameSurname },
-				{"merchantId", _token.merchantId },
-				{"totalAmount", totalStr },
-				{"memberId", _memberId },
-				{"userCode", auth.merchantUser },
-				{"txnType", "Auth" },
-				{"installmentCount", installmentStr },
-				{"currency", ((int)request.saleInfo.currency).ToString() },
-				{"orderId", request.orderNumber },
-				{"webUrl", "" },
-				{"description", $"{request.orderNumber} nolu sipariş ödemesi" },
-				{"requestIp", request.customerIPAddress },
-				{"rnd", _rnd },
-				{"hash", "" },
-			};
-
-			string hash_key = GenerateHash($"{auth.merchantStorekey}{_rnd}{request.orderNumber}{totalStr}{_token.merchantId}");
-			
-			req["hash"] = hash_key;
-
-			string link = $"{(auth.testPlatform ? _urlAPITest : _urlAPILive)}/api/Payment/PaymentNon3D";
-
-			string responseStr = Request(req, link, _token);
-
-			Dictionary<string, object> responseDic = JsonConvertHelper.Convert<Dictionary<string, object>>(responseStr);
-
-			response.privateResponse = responseDic;
-
-			if (responseDic?.ContainsKey("isSuccess") == true && responseDic["isSuccess"].cpToBool() == true)
-			{
-				string transactionId = "";
-
-				try
-				{
-					if (responseDic.ContainsKey("data"))
-					{
-						var dataObj = JsonConvertHelper.Convert<Dictionary<string, object>>(JsonConvertHelper.Json(responseDic["data"]));
-
-						if (dataObj?.ContainsKey("authCode") == true)
-							transactionId = dataObj["authCode"].cpToString();
-					}
-				}
-				catch { }
-
-
-				response.statu = SaleResponseStatu.Success;
-				response.message = "İşlem başarılı";
-				response.transactionId = transactionId;
-
-				return response;
-			}
-			else
-			{
-				string errorMsg = "İşlem sırasında bir hata oluştu";
-
-				if (responseDic?.ContainsKey("message") == true && responseDic["message"].cpToString() != "")
-					errorMsg = responseDic["message"].cpToString();
-
-				response.statu = SaleResponseStatu.Error;
-				response.message = errorMsg;
-
-				return response;
-			}
-		}
+                return response;
+            }
 
-		private SaleResponse Sale3D(SaleRequest request, VirtualPOSAuth auth)
-		{
-			SaleResponse response = new SaleResponse();
-			response.orderNumber = request.orderNumber;
+            string totalStr = request.saleInfo.amount.ToString("N2", CultureInfo.GetCultureInfo("tr-TR")).Replace(".", "").Replace(",", ".");
+            string installmentStr = request.saleInfo.installment.ToString();
 
-			AhlpayTokenModel _token = null;
+            string name = request.invoiceInfo?.name;
+            string surname = request.invoiceInfo?.surname;
 
-			try
-			{
-				_token = GetTokenModel(auth);
-			}
-			catch (Exception ex)
-			{
-				response.statu = SaleResponseStatu.Error;
-				response.message = ex.Message;
+            if (string.IsNullOrWhiteSpace(name))
+                name = "[boş]";
 
-				return response;
-			}
+            if (string.IsNullOrWhiteSpace(surname))
+                surname = "[boş]";
 
-			string totalStr = request.saleInfo.amount.ToString("N2", CultureInfo.GetCultureInfo("tr-TR")).Replace(".", "").Replace(",", ".");
-			string installmentStr = request.saleInfo.installment.ToString();
+            int _memberId = 1;
 
-			string name = request.invoiceInfo?.name;
-			string surname = request.invoiceInfo?.surname;
+            string _rnd = Guid.NewGuid().ToString();
 
-			if (string.IsNullOrWhiteSpace(name))
-				name = "[boş]";
+            Dictionary<string, object> req = new Dictionary<string, object> {
+                {"cardNumber", request.saleInfo.cardNumber},
+                {"expiryDateMonth", request.saleInfo.cardExpiryDateMonth.ToString("00") },
+                {"expiryDateYear", request.saleInfo.cardExpiryDateYear.cpToString() },
+                {"cvv", request.saleInfo.cardCVV},
+                {"cardHolderName", request.saleInfo.cardNameSurname },
+                {"merchantId", _token.merchantId },
+                {"totalAmount", totalStr },
+                {"memberId", _memberId },
+                {"userCode", auth.merchantUser },
+                {"txnType", "Auth" },
+                {"installmentCount", installmentStr },
+                {"currency", ((int)request.saleInfo.currency).ToString() },
+                {"orderId", request.orderNumber },
+                {"webUrl", "" },
+                {"description", $"{request.orderNumber} nolu sipariş ödemesi" },
+                {"requestIp", request.customerIPAddress },
+                {"rnd", _rnd },
+                {"hash", "" },
+            };
+
+            string hash_key = GenerateHash($"{auth.merchantStorekey}{_rnd}{request.orderNumber}{totalStr}{_token.merchantId}");
+
+            req["hash"] = hash_key;
+
+            string link = $"{(auth.testPlatform ? _urlAPITest : _urlAPILive)}/api/Payment/PaymentNon3D";
+
+            string responseStr = Request(req, link, _token);
+
+            Dictionary<string, object> responseDic = JsonConvertHelper.Convert<Dictionary<string, object>>(responseStr);
+
+            response.privateResponse = responseDic;
+
+            if (responseDic?.ContainsKey("isSuccess") == true && responseDic["isSuccess"].cpToBool() == true)
+            {
+                string transactionId = "";
 
-			if (string.IsNullOrWhiteSpace(surname))
-				surname = "[boş]";
+                try
+                {
+                    if (responseDic.ContainsKey("data"))
+                    {
+                        var dataObj = JsonConvertHelper.Convert<Dictionary<string, object>>(JsonConvertHelper.Json(responseDic["data"]));
 
-			int _memberId = 1;
+                        if (dataObj?.ContainsKey("authCode") == true)
+                            transactionId = dataObj["authCode"].cpToString();
+                    }
+                }
+                catch { }
 
-			string _rnd = Guid.NewGuid().ToString();
+
+                response.statu = SaleResponseStatu.Success;
+                response.message = "İşlem başarılı";
+                response.transactionId = transactionId;
+
+                return response;
+            }
+            else
+            {
+                string errorMsg = "İşlem sırasında bir hata oluştu";
+
+                if (responseDic?.ContainsKey("message") == true && responseDic["message"].cpToString() != "")
+                    errorMsg = responseDic["message"].cpToString();
+
+                response.statu = SaleResponseStatu.Error;
+                response.message = errorMsg;
+
+                return response;
+            }
+        }
 
-			Dictionary<string, object> req = new Dictionary<string, object> {
-				{"cardNumber", request.saleInfo.cardNumber},
-				{"expiryDateMonth", request.saleInfo.cardExpiryDateMonth.ToString("00") },
-				{"expiryDateYear", request.saleInfo.cardExpiryDateYear.cpToString() },
-				{"cvv", request.saleInfo.cardCVV},
-				{"cardHolderName", request.saleInfo.cardNameSurname },
-				{"merchantId", _token.merchantId },
-				{"totalAmount", totalStr },
-				{"memberId", _memberId },
-				{"userCode", auth.merchantUser },
-				{"txnType", "Auth" },
-				{"installmentCount", installmentStr },
-				{"currency", ((int)request.saleInfo.currency).ToString() },
-				{"orderId", request.orderNumber },
-				{"webUrl", "" },
-				{"description", $"{request.orderNumber} nolu sipariş ödemesi" },
-				{"requestIp", request.customerIPAddress },
-				{"rnd", _rnd },
-				{"hash", "" },
-				{"okUrl", request.payment3D.returnURL },
-				{"failUrl", request.payment3D.returnURL },
-			};
+        private SaleResponse Sale3D(SaleRequest request, VirtualPOSAuth auth)
+        {
+            SaleResponse response = new SaleResponse();
+            response.orderNumber = request.orderNumber;
 
-			string hash_key = GenerateHash($"{auth.merchantStorekey}{_rnd}{request.orderNumber}{totalStr}{_token.merchantId}");
+            AhlpayTokenModel _token = null;
 
-			req["hash"] = hash_key;
+            try
+            {
+                _token = GetTokenModel(auth);
+            }
+            catch (Exception ex)
+            {
+                response.statu = SaleResponseStatu.Error;
+                response.message = ex.Message;
 
-			string link = $"{(auth.testPlatform ? _urlAPITest : _urlAPILive)}/api/Payment/Payment3DWithEventRedirect";
+                return response;
+            }
 
-			string responseStr = Request(req, link, _token);
+            string totalStr = request.saleInfo.amount.ToString("N2", CultureInfo.GetCultureInfo("tr-TR")).Replace(".", "").Replace(",", ".");
+            string installmentStr = request.saleInfo.installment.ToString();
 
-			Dictionary<string, object> responseDic = JsonConvertHelper.Convert<Dictionary<string, object>>(responseStr);
+            string name = request.invoiceInfo?.name;
+            string surname = request.invoiceInfo?.surname;
 
-			response.privateResponse = responseDic;
+            if (string.IsNullOrWhiteSpace(name))
+                name = "[boş]";
 
-			if (responseDic?.ContainsKey("isSuccess") == true && responseDic["isSuccess"].cpToBool() == true)
-			{
-				response.statu = SaleResponseStatu.RedirectHTML;
-				response.message = responseDic["data"].cpToString();
+            if (string.IsNullOrWhiteSpace(surname))
+                surname = "[boş]";
 
-				return response;
-			}
-			else
-			{
-				string errorMsg = "İşlem sırasında bir hata oluştu";
+            int _memberId = 1;
 
-				if (responseDic?.ContainsKey("message") == true && responseDic["message"].cpToString() != "")
-					errorMsg = responseDic["message"].cpToString();
+            string _rnd = Guid.NewGuid().ToString();
 
-				response.statu = SaleResponseStatu.Error;
-				response.message = errorMsg;
+            Dictionary<string, object> req = new Dictionary<string, object> {
+                {"cardNumber", request.saleInfo.cardNumber},
+                {"expiryDateMonth", request.saleInfo.cardExpiryDateMonth.ToString("00") },
+                {"expiryDateYear", request.saleInfo.cardExpiryDateYear.cpToString() },
+                {"cvv", request.saleInfo.cardCVV},
+                {"cardHolderName", request.saleInfo.cardNameSurname },
+                {"merchantId", _token.merchantId },
+                {"totalAmount", totalStr },
+                {"memberId", _memberId },
+                {"userCode", auth.merchantUser },
+                {"txnType", "Auth" },
+                {"installmentCount", installmentStr },
+                {"currency", ((int)request.saleInfo.currency).ToString() },
+                {"orderId", request.orderNumber },
+                {"webUrl", "" },
+                {"description", $"{request.orderNumber} nolu sipariş ödemesi" },
+                {"requestIp", request.customerIPAddress },
+                {"rnd", _rnd },
+                {"hash", "" },
+                {"okUrl", request.payment3D.returnURL },
+                {"failUrl", request.payment3D.returnURL },
+            };
 
-				return response;
-			}
-		}
+            string hash_key = GenerateHash($"{auth.merchantStorekey}{_rnd}{request.orderNumber}{totalStr}{_token.merchantId}");
 
-		public SaleResponse Sale3DResponse(Sale3DResponseRequest request, VirtualPOSAuth auth)
-		{
-			SaleResponse response = new SaleResponse();
+            req["hash"] = hash_key;
 
-			response.privateResponse = request?.responseArray;
+            string link = $"{(auth.testPlatform ? _urlAPITest : _urlAPILive)}/api/Payment/Payment3DWithEventRedirect";
 
+            string responseStr = Request(req, link, _token);
 
+            Dictionary<string, object> responseDic = JsonConvertHelper.Convert<Dictionary<string, object>>(responseStr);
 
-			return response;
-		}
+            response.privateResponse = responseDic;
 
-		public CancelResponse Cancel(CancelRequest request, VirtualPOSAuth auth)
-		{
-			throw new NotImplementedException();
-		}
+            if (responseDic?.ContainsKey("isSuccess") == true && responseDic["isSuccess"].cpToBool() == true)
+            {
+                response.statu = SaleResponseStatu.RedirectHTML;
+                response.message = responseDic["data"].cpToString();
 
-		public RefundResponse Refund(RefundRequest request, VirtualPOSAuth auth)
-		{
-			throw new NotImplementedException();
-		}
+                return response;
+            }
+            else
+            {
+                string errorMsg = "İşlem sırasında bir hata oluştu";
 
-		public AllInstallmentQueryResponse AllInstallmentQuery(AllInstallmentQueryRequest request, VirtualPOSAuth auth)
-		{
-			throw new NotImplementedException();
-		}
+                if (responseDic?.ContainsKey("message") == true && responseDic["message"].cpToString() != "")
+                    errorMsg = responseDic["message"].cpToString();
 
-		public BINInstallmentQueryResponse BINInstallmentQuery(BINInstallmentQueryRequest request, VirtualPOSAuth auth)
-		{
-			throw new NotImplementedException();
-		}
+                response.statu = SaleResponseStatu.Error;
+                response.message = errorMsg;
 
-		public AdditionalInstallmentQueryResponse AdditionalInstallmentQuery(AdditionalInstallmentQueryRequest request, VirtualPOSAuth auth)
-		{
-			throw new NotImplementedException();
-		}
+                return response;
+            }
+        }
 
-		private AhlpayTokenModel GetTokenModel(VirtualPOSAuth auth)
-		{
-			AhlpayTokenModel token = null;
+        public SaleResponse Sale3DResponse(Sale3DResponseRequest request, VirtualPOSAuth auth)
+        {
+            SaleResponse response = new SaleResponse();
 
-			Dictionary<string, object> postData = new Dictionary<string, object>
-			{
-				{ "email", auth.merchantUser },
-				{ "password", auth.merchantPassword }
-			};
+            response.privateResponse = request?.responseArray;
 
-			string link = $"{(auth.testPlatform ? _urlAPITest : _urlAPILive)}/api/Security/AuthenticationMerchant";
 
-			string loginResponse = Request(postData, link);
 
-			Dictionary<string, object> loginDic = JsonConvertHelper.Convert<Dictionary<string, object>>(loginResponse);
+            return response;
+        }
 
-			if (loginDic?.ContainsKey("isSuccess") == true && loginDic["isSuccess"].cpToBool() == true && loginDic?.ContainsKey("data") == true)
-			{
-				token = JsonConvertHelper.Convert<AhlpayTokenModel>(JsonConvertHelper.Json(loginDic["data"]));
+        public CancelResponse Cancel(CancelRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
 
-				if (!string.IsNullOrWhiteSpace(token?.token))
-					return token;
-			}
+        public RefundResponse Refund(RefundRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
 
-			string errorMsg = "Ahlpay token error";
+        public AllInstallmentQueryResponse AllInstallmentQuery(AllInstallmentQueryRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
 
-			if (loginDic?.ContainsKey("message") == true && loginDic["message"].cpToString() != "")
-				errorMsg = errorMsg + " - " + loginDic["message"].cpToString();
+        public BINInstallmentQueryResponse BINInstallmentQuery(BINInstallmentQueryRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
 
-			throw new Exception(errorMsg);
-		}
+        public AdditionalInstallmentQueryResponse AdditionalInstallmentQuery(AdditionalInstallmentQueryRequest request, VirtualPOSAuth auth)
+        {
+            throw new NotImplementedException();
+        }
 
-		private string Request(Dictionary<string, object> param, string link, AhlpayTokenModel token = null)
-		{
-			string responseString = "";
+        private AhlpayTokenModel GetTokenModel(VirtualPOSAuth auth)
+        {
+            AhlpayTokenModel token = null;
 
-			try
-			{
-				ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
-				ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-				System.Net.ServicePointManager.Expect100Continue = false;
+            Dictionary<string, object> postData = new Dictionary<string, object>
+            {
+                { "email", auth.merchantUser },
+                { "password", auth.merchantPassword }
+            };
 
-				string jsonContent = JsonConvertHelper.Json(param);
+            string link = $"{(auth.testPlatform ? _urlAPITest : _urlAPILive)}/api/Security/AuthenticationMerchant";
 
-				using (HttpClient client = new HttpClient())
-				using (var req = new StringContent(jsonContent, Encoding.UTF8, "application/json"))
-				{
-					req.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json") { CharSet = Encoding.UTF8.WebName };
+            string loginResponse = Request(postData, link);
 
-					if (token != null)
-						client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(token.tokenType, token.token);
+            Dictionary<string, object> loginDic = JsonConvertHelper.Convert<Dictionary<string, object>>(loginResponse);
 
-					var response = client.PostAsync(link, req).Result;
-					byte[] responseByte = response.Content.ReadAsByteArrayAsync().Result;
-					responseString = Encoding.UTF8.GetString(responseByte);
-				}
-			}
-			catch { }
+            if (loginDic?.ContainsKey("isSuccess") == true && loginDic["isSuccess"].cpToBool() == true && loginDic?.ContainsKey("data") == true)
+            {
+                token = JsonConvertHelper.Convert<AhlpayTokenModel>(JsonConvertHelper.Json(loginDic["data"]));
 
-			return responseString;
-		}
+                if (!string.IsNullOrWhiteSpace(token?.token))
+                    return token;
+            }
 
-		private string GenerateHash(string hashString)
-		{
-			string hash = "";
+            string errorMsg = "Ahlpay token error";
 
-			using (SHA512 s512 = SHA512.Create())
-			{
-				UnicodeEncoding ByteConverter = new UnicodeEncoding();
-				byte[] bytes = s512.ComputeHash(ByteConverter.GetBytes(hashString));
-				hash = BitConverter.ToString(bytes).Replace("-", "");
-			}
+            if (loginDic?.ContainsKey("message") == true && loginDic["message"].cpToString() != "")
+                errorMsg = errorMsg + " - " + loginDic["message"].cpToString();
 
-			return hash;
-		}
+            throw new Exception(errorMsg);
+        }
+
+        private string Request(Dictionary<string, object> param, string link, AhlpayTokenModel token = null)
+        {
+            string responseString = "";
+
+            try
+            {
+                ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                System.Net.ServicePointManager.Expect100Continue = false;
+
+                string jsonContent = JsonConvertHelper.Json(param);
+
+                using (HttpClient client = new HttpClient())
+                using (var req = new StringContent(jsonContent, Encoding.UTF8, "application/json"))
+                {
+                    req.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json") { CharSet = Encoding.UTF8.WebName };
+
+                    if (token != null)
+                        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(token.tokenType, token.token);
+
+                    var response = client.PostAsync(link, req).Result;
+                    byte[] responseByte = response.Content.ReadAsByteArrayAsync().Result;
+                    responseString = Encoding.UTF8.GetString(responseByte);
+                }
+            }
+            catch { }
+
+            return responseString;
+        }
+
+        private string GenerateHash(string hashString)
+        {
+            string hash = "";
+
+            using (SHA512 s512 = SHA512.Create())
+            {
+                UnicodeEncoding ByteConverter = new UnicodeEncoding();
+                byte[] bytes = s512.ComputeHash(ByteConverter.GetBytes(hashString));
+                hash = BitConverter.ToString(bytes).Replace("-", "");
+            }
+
+            return hash;
+        }
 
         public SaleResponse Commit(CommitRequest request, VirtualPOSAuth auth)
         {
@@ -341,13 +339,13 @@ namespace CP.VPOS.Banks.Ahlpay
         }
     }
 
-	internal class AhlpayTokenModel
-	{
-		public string token { get; set; }
-		public string tokenType { get; set; }
-		public string fullName { get; set; }
-		public string sessionId { get; set; }
-		public string merchantName { get; set; }
-		public long merchantId { get; set; }
-	}
+    internal class AhlpayTokenModel
+    {
+        public string token { get; set; }
+        public string tokenType { get; set; }
+        public string fullName { get; set; }
+        public string sessionId { get; set; }
+        public string merchantName { get; set; }
+        public long merchantId { get; set; }
+    }
 }

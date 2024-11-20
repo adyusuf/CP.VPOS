@@ -76,7 +76,7 @@ namespace CP.VPOS.Infrastructures.Iyzico
             return this;
         }
 
-        public ToStringRequestBuilder AppendList (String key, List<int> list = null)
+        public ToStringRequestBuilder AppendList(String key, List<int> list = null)
         {
             if (list != null)
             {

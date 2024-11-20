@@ -1,7 +1,7 @@
 ﻿
 namespace CP.VPOS.Enums
 {
-   public enum CreditCardProgram
+    public enum CreditCardProgram
     {
         Unknown = -1,
         Axess = 0,
@@ -16,6 +16,6 @@ namespace CP.VPOS.Enums
         ShopAndFly = 9,
         Wings = 10,
         World = 11,
-		Advantage = 12
-	}
+        Advantage = 12
+    }
 }

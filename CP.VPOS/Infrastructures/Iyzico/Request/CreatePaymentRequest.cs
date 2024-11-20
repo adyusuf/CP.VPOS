@@ -1,6 +1,6 @@
-﻿using System;
+﻿using CP.VPOS.Infrastructures.Iyzico.Model;
+using System;
 using System.Collections.Generic;
-using CP.VPOS.Infrastructures.Iyzico.Model;
 
 namespace CP.VPOS.Infrastructures.Iyzico.Request
 {
@@ -33,7 +33,7 @@ namespace CP.VPOS.Infrastructures.Iyzico.Request
                 .Append("paymentChannel", PaymentChannel)
                 .Append("basketId", BasketId)
                 .Append("paymentGroup", PaymentGroup)
-                .Append("paymentCard", PaymentCard)               
+                .Append("paymentCard", PaymentCard)
                 .Append("buyer", Buyer)
                 .Append("shippingAddress", ShippingAddress)
                 .Append("billingAddress", BillingAddress)

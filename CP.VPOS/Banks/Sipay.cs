@@ -1,18 +1,15 @@
-﻿using System;
+﻿using CP.VPOS.Enums;
+using CP.VPOS.Helpers;
+using CP.VPOS.Interfaces;
+using CP.VPOS.Models;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
-using CP.VPOS.Enums;
-using CP.VPOS.Helpers;
-using CP.VPOS.Infrastructures.Iyzico.Model;
-using CP.VPOS.Interfaces;
-using CP.VPOS.Models;
 
 namespace CP.VPOS.Banks.Sipay
 {
@@ -89,7 +86,7 @@ namespace CP.VPOS.Banks.Sipay
             };
 
             //string hash_key = GenerateHashKey(totalStr, installmentStr, request.saleInfo.currency.ToString(), auth.merchantStorekey, request.orderNumber, auth.merchantPassword);
-            
+
             var data = totalStr + "|" + installmentStr + "|" + request.saleInfo.currency.ToString() + "|" + auth.merchantStorekey + "|" + request.orderNumber;
             string hash_key = GenerateHashKey(data, auth.merchantPassword);
 

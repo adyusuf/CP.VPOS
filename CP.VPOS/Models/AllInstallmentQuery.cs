@@ -17,9 +17,9 @@ namespace CP.VPOS.Models
         /// Para birimi
         /// </summary>
 		public Currency? currency { get; set; }
-	}
+    }
 
-	public class AllInstallmentQueryResponse
+    public class AllInstallmentQueryResponse
     {
         /// <summary>
         /// İşlem Durumu

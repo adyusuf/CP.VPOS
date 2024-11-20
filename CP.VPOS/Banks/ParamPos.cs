@@ -7,9 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
-using System.Xml;
 
 namespace CP.VPOS.Banks.ParamPos
 {
@@ -30,15 +28,15 @@ namespace CP.VPOS.Banks.ParamPos
 
             int _installment = request.saleInfo.installment > 1 ? request.saleInfo.installment : 1;
 
-            var installmentList = BINInstallmentQuery(new BINInstallmentQueryRequest { BIN = request.saleInfo.cardNumber.Substring(0,8) }, auth);
+            var installmentList = BINInstallmentQuery(new BINInstallmentQueryRequest { BIN = request.saleInfo.cardNumber.Substring(0, 8) }, auth);
 
             decimal _decAmountTotal = request.saleInfo.amount;
 
-            if(installmentList?.confirm == true)
+            if (installmentList?.confirm == true)
             {
                 var installmentDetail = installmentList.installmentList?.FirstOrDefault(s => s.count == _installment);
 
-                if(installmentDetail?.customerCostCommissionRate > 0)
+                if (installmentDetail?.customerCostCommissionRate > 0)
                     _decAmountTotal = request.saleInfo.amount + ((request.saleInfo.amount * installmentDetail.customerCostCommissionRate.cpToDecimal()) / 100);
             }
 

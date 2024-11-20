@@ -1,16 +1,15 @@
-﻿using System;
+﻿using CP.VPOS.Enums;
+using CP.VPOS.Helpers;
+using CP.VPOS.Interfaces;
+using CP.VPOS.Models;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
-using CP.VPOS.Enums;
-using CP.VPOS.Helpers;
-using CP.VPOS.Interfaces;
-using CP.VPOS.Models;
 
 namespace CP.VPOS.Banks.IQmoney
 {
@@ -394,106 +393,106 @@ namespace CP.VPOS.Banks.IQmoney
             return null;
         }
 
-		public AllInstallmentQueryResponse AllInstallmentQuery(AllInstallmentQueryRequest request, VirtualPOSAuth auth)
-		{
-			AllInstallmentQueryResponse response = new AllInstallmentQueryResponse { confirm = false, installmentList = new List<AllInstallment>() };
+        public AllInstallmentQueryResponse AllInstallmentQuery(AllInstallmentQueryRequest request, VirtualPOSAuth auth)
+        {
+            AllInstallmentQueryResponse response = new AllInstallmentQueryResponse { confirm = false, installmentList = new List<AllInstallment>() };
 
-			IQmoneyTokenModel _token = null;
+            IQmoneyTokenModel _token = null;
 
-			try
-			{
-				_token = GetTokenModel(auth);
-			}
-			catch
-			{
-				return response;
-			}
+            try
+            {
+                _token = GetTokenModel(auth);
+            }
+            catch
+            {
+                return response;
+            }
 
-			Dictionary<string, object> req = new Dictionary<string, object> {
-				{"currency_code", (request.currency ?? Currency.TRY).ToString() }
-			};
+            Dictionary<string, object> req = new Dictionary<string, object> {
+                {"currency_code", (request.currency ?? Currency.TRY).ToString() }
+            };
 
 
-			string link = $"{(auth.testPlatform ? _urlAPITest : _urlAPILive)}/api/commissions";
+            string link = $"{(auth.testPlatform ? _urlAPITest : _urlAPILive)}/api/commissions";
 
-			string responseStr = Request(req, link, _token);
+            string responseStr = Request(req, link, _token);
 
-			try
-			{
-				Dictionary<string, object> responseDic = JsonConvertHelper.Convert<Dictionary<string, object>>(responseStr);
+            try
+            {
+                Dictionary<string, object> responseDic = JsonConvertHelper.Convert<Dictionary<string, object>>(responseStr);
 
-				if (responseDic?.ContainsKey("status_code") == true && responseDic["status_code"].cpToString() == "100")
-				{
-					response.confirm = true;
+                if (responseDic?.ContainsKey("status_code") == true && responseDic["status_code"].cpToString() == "100")
+                {
+                    response.confirm = true;
 
-					if (responseDic?.ContainsKey("data") == true)
-					{
-						Dictionary<string, object> keyValuePairs = JsonConvertHelper.Convert<Dictionary<string, object>>(JsonConvertHelper.Json<object>(responseDic["data"]));
+                    if (responseDic?.ContainsKey("data") == true)
+                    {
+                        Dictionary<string, object> keyValuePairs = JsonConvertHelper.Convert<Dictionary<string, object>>(JsonConvertHelper.Json<object>(responseDic["data"]));
 
-						if (keyValuePairs?.Any() == true)
-						{
-							foreach (var item in keyValuePairs)
-							{
-								int installment_number = item.Key.cpToInt();
+                        if (keyValuePairs?.Any() == true)
+                        {
+                            foreach (var item in keyValuePairs)
+                            {
+                                int installment_number = item.Key.cpToInt();
 
-								List<Dictionary<string, object>> installmentList = JsonConvertHelper.Convert<List<Dictionary<string, object>>>(JsonConvertHelper.Json<object>(item.Value));
+                                List<Dictionary<string, object>> installmentList = JsonConvertHelper.Convert<List<Dictionary<string, object>>>(JsonConvertHelper.Json<object>(item.Value));
 
-								foreach (Dictionary<string, object> installmentModel in installmentList)
-								{
+                                foreach (Dictionary<string, object> installmentModel in installmentList)
+                                {
 
-									if (installmentModel?.ContainsKey("user_commission_percentage") == true && installmentModel["user_commission_percentage"].cpToString() != "x" && installmentModel.ContainsKey("getpos_card_program") == true && installmentModel["getpos_card_program"].cpToString() != "")
-									{
-										CreditCardProgram creditCardProgram = CreditCardProgram.Unknown;
-										string getpos_card_program = installmentModel["getpos_card_program"].cpToString();
-										float user_commission_percentage = installmentModel["user_commission_percentage"].cpToSingle();
+                                    if (installmentModel?.ContainsKey("user_commission_percentage") == true && installmentModel["user_commission_percentage"].cpToString() != "x" && installmentModel.ContainsKey("getpos_card_program") == true && installmentModel["getpos_card_program"].cpToString() != "")
+                                    {
+                                        CreditCardProgram creditCardProgram = CreditCardProgram.Unknown;
+                                        string getpos_card_program = installmentModel["getpos_card_program"].cpToString();
+                                        float user_commission_percentage = installmentModel["user_commission_percentage"].cpToSingle();
 
-										switch (getpos_card_program)
-										{
-											case "MAXIMUM": creditCardProgram = CreditCardProgram.Maximum; break;
-											case "BANKKART_COMBO": creditCardProgram = CreditCardProgram.Bankkart; break;
-											case "WORLD": creditCardProgram = CreditCardProgram.World; break;
-											case "PARAF": creditCardProgram = CreditCardProgram.Paraf; break;
-											case "BONUS": creditCardProgram = CreditCardProgram.Bonus; break;
-											case "AXESS": creditCardProgram = CreditCardProgram.Axess; break;
-											case "WINGS": creditCardProgram = CreditCardProgram.Wings; break;
-											case "CARD_FNS": creditCardProgram = CreditCardProgram.CardFinans; break;
-											case "ADVANT": creditCardProgram = CreditCardProgram.Advantage; break;
-											case "MILES&SMILES": creditCardProgram = CreditCardProgram.MilesAndSmiles; break;
+                                        switch (getpos_card_program)
+                                        {
+                                            case "MAXIMUM": creditCardProgram = CreditCardProgram.Maximum; break;
+                                            case "BANKKART_COMBO": creditCardProgram = CreditCardProgram.Bankkart; break;
+                                            case "WORLD": creditCardProgram = CreditCardProgram.World; break;
+                                            case "PARAF": creditCardProgram = CreditCardProgram.Paraf; break;
+                                            case "BONUS": creditCardProgram = CreditCardProgram.Bonus; break;
+                                            case "AXESS": creditCardProgram = CreditCardProgram.Axess; break;
+                                            case "WINGS": creditCardProgram = CreditCardProgram.Wings; break;
+                                            case "CARD_FNS": creditCardProgram = CreditCardProgram.CardFinans; break;
+                                            case "ADVANT": creditCardProgram = CreditCardProgram.Advantage; break;
+                                            case "MILES&SMILES": creditCardProgram = CreditCardProgram.MilesAndSmiles; break;
 
-											default:
-												creditCardProgram = CreditCardProgram.Unknown;
-												break;
-										}
+                                            default:
+                                                creditCardProgram = CreditCardProgram.Unknown;
+                                                break;
+                                        }
 
-										if (creditCardProgram == CreditCardProgram.Unknown)
-											continue;
+                                        if (creditCardProgram == CreditCardProgram.Unknown)
+                                            continue;
 
-										AllInstallment model = new AllInstallment
-										{
-											bankCode = "9986",
-											cardProgram = creditCardProgram,
-											count = installment_number,
-											customerCostCommissionRate = user_commission_percentage
-										};
+                                        AllInstallment model = new AllInstallment
+                                        {
+                                            bankCode = "9986",
+                                            cardProgram = creditCardProgram,
+                                            count = installment_number,
+                                            customerCostCommissionRate = user_commission_percentage
+                                        };
 
-										response.installmentList.Add(model);
-									}
-									else
-										continue;
+                                        response.installmentList.Add(model);
+                                    }
+                                    else
+                                        continue;
 
-								}
-							}
+                                }
+                            }
 
-						}
-					}
-				}
-			}
-			catch { }
+                        }
+                    }
+                }
+            }
+            catch { }
 
-			return response;
-		}
+            return response;
+        }
 
-		public BINInstallmentQueryResponse BINInstallmentQuery(BINInstallmentQueryRequest request, VirtualPOSAuth auth)
+        public BINInstallmentQueryResponse BINInstallmentQuery(BINInstallmentQueryRequest request, VirtualPOSAuth auth)
         {
             BINInstallmentQueryResponse response = new BINInstallmentQueryResponse();
 
