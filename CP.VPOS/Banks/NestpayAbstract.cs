@@ -15,10 +15,10 @@ namespace CP.VPOS.Banks
     internal abstract class NestpayVirtualPOSService : IVirtualPOSService
     {
         private static string _urlAPITest = "https://entegrasyon.asseco-see.com.tr/fim/api";
-        private static string _urlAPILive = "";
+        private static string _urlAPILive = string.Empty;
 
         private static string _url3Dtest = "https://entegrasyon.asseco-see.com.tr/fim/est3Dgate";
-        private static string _url3DLive = "";
+        private static string _url3DLive = string.Empty;
 
         public NestpayVirtualPOSService(string urlAPILive, string url3DLive)
         {
@@ -70,7 +70,7 @@ namespace CP.VPOS.Banks
                 {
                     response.statu = SaleResponseStatu.Success;
                     response.message = "İşlem başarıyla tamamlandı";
-                    response.transactionId = respDic.ContainsKey("TransId") ? respDic["TransId"].cpToString() : "";
+                    response.transactionId = respDic.ContainsKey("TransId") ? respDic["TransId"].cpToString() : string.Empty;
                 }
             }
 
@@ -95,7 +95,7 @@ namespace CP.VPOS.Banks
                 {
                     response.statu = SaleResponseStatu.Success;
                     response.message = "İşlem başarıyla tamamlandı";
-                    response.transactionId = request.responseArray.ContainsKey("TransId") ? request.responseArray["TransId"].cpToString() : "";
+                    response.transactionId = request.responseArray.ContainsKey("TransId") ? request.responseArray["TransId"].cpToString() : string.Empty;
                 }
                 else
                 {
@@ -211,7 +211,7 @@ namespace CP.VPOS.Banks
         {
             SaleResponse response = new SaleResponse();
 
-            string installment = request.saleInfo.installment > 1 ? request.saleInfo.installment.ToString() : "";
+            string installment = request.saleInfo.installment > 1 ? request.saleInfo.installment.ToString() : string.Empty;
 
             var threedmode = request.payment3D.threeDMode == ThreeDMode.ThreeDPay ? "3d_pay" : "3d";
 
@@ -275,7 +275,7 @@ namespace CP.VPOS.Banks
 
         private string Request(Dictionary<string, string> param, string link)
         {
-            string responseString = "";
+            string responseString = string.Empty;
 
             ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };

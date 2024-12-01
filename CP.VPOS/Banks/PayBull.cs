@@ -101,7 +101,7 @@ namespace CP.VPOS.Banks.PayBull
 
             if (responseDic?.ContainsKey("status_code") == true && responseDic["status_code"].cpToString() == "100")
             {
-                string transactionId = "";
+                string transactionId = string.Empty;
 
                 Dictionary<string, object> dataObj = null;
 
@@ -601,7 +601,7 @@ namespace CP.VPOS.Banks.PayBull
 
         private string Request(Dictionary<string, object> param, string link, PayBullTokenModel token = null)
         {
-            string responseString = "";
+            string responseString = string.Empty;
 
             try
             {
@@ -639,7 +639,7 @@ namespace CP.VPOS.Banks.PayBull
             var password = Sha1Hash(appSecret);
             var salt = Sha1Hash(mtRand.Next().ToString()).Substring(0, 4);
 
-            var saltWithPassword = "";
+            var saltWithPassword = string.Empty;
             using (var sha256Hash = SHA256.Create())
             {
                 saltWithPassword = GetHash(sha256Hash, password + salt);
@@ -667,7 +667,7 @@ namespace CP.VPOS.Banks.PayBull
                 var salt = mainStringArray[1];
                 var mainKey = mainStringArray[2];
 
-                var saltWithPassword = "";
+                var saltWithPassword = string.Empty;
                 using (var sha256Hash = SHA256.Create())
                 {
                     saltWithPassword = GetHash(sha256Hash, password + salt);

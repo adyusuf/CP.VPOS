@@ -65,11 +65,11 @@ namespace CP.VPOS.Banks.Vakifbank
                 {
                     response.statu = SaleResponseStatu.Success;
                     response.message = "İşlem başarıyla tamamlandı";
-                    response.transactionId = respDic.ContainsKey("TransactionId") ? respDic["TransactionId"].cpToString() : "";
+                    response.transactionId = respDic.ContainsKey("TransactionId") ? respDic["TransactionId"].cpToString() : string.Empty;
                 }
                 else
                 {
-                    string message = "";
+                    var message = string.Empty;
 
                     if (respDic.ContainsKey("ResultDetail") && respDic["ResultDetail"].cpToString() != "")
                         message = respDic["ResultDetail"].cpToString();
@@ -81,7 +81,7 @@ namespace CP.VPOS.Banks.Vakifbank
                     if (string.IsNullOrWhiteSpace(message))
                         message = "İşlem sırasında bilinmeyen bir hata oluştu.";
 
-                    response.transactionId = "";
+                    response.transactionId = string.Empty;
                     response.statu = SaleResponseStatu.Error;
                     response.message = message;
                 }
@@ -223,7 +223,7 @@ namespace CP.VPOS.Banks.Vakifbank
                 Dictionary<string, object> respDic = FoundationHelper.XmltoDictionary(resp, "VposResponse");
 
                 response.privateResponse = respDic;
-                response.transactionId = respDic?.ContainsKey("TransactionId") == true ? respDic["TransactionId"].cpToString() : "";
+                response.transactionId = respDic?.ContainsKey("TransactionId") == true ? respDic["TransactionId"].cpToString() : string.Empty;
 
                 if (respDic?.ContainsKey("ResultCode") == true)
                 {
@@ -234,7 +234,7 @@ namespace CP.VPOS.Banks.Vakifbank
                     }
                     else
                     {
-                        string message = respDic.ContainsKey("ResultDetail") ? respDic["ResultDetail"].cpToString() : "";
+                        string message = respDic.ContainsKey("ResultDetail") ? respDic["ResultDetail"].cpToString() : string.Empty;
 
                         if (string.IsNullOrWhiteSpace(message))
                             message = getErrorDesc(respDic["ResultDetail"].cpToString());
@@ -289,7 +289,7 @@ namespace CP.VPOS.Banks.Vakifbank
 
         private string Request(Dictionary<string, string> param, string link)
         {
-            string responseString = "";
+            var responseString = string.Empty;
 
             ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
@@ -326,14 +326,14 @@ namespace CP.VPOS.Banks.Vakifbank
 
             System.Net.HttpWebResponse resp = (System.Net.HttpWebResponse)request.GetResponse();
             System.IO.StreamReader responsereader = new System.IO.StreamReader(resp.GetResponseStream(), System.Text.Encoding.UTF8);
-            string gelenXml = responsereader.ReadToEnd();
+            var gelenXml = responsereader.ReadToEnd();
 
             return gelenXml;
         }
 
         private string getErrorDesc(string ErrCode)
         {
-            string errMsg = "";
+            var errMsg = string.Empty;
 
             switch (ErrCode)
             {

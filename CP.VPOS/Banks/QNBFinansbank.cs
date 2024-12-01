@@ -330,7 +330,7 @@ namespace CP.VPOS.Banks.QNBFinansbank
 
         private string Request2(Dictionary<string, string> param, VirtualPOSAuth auth, string link = null)
         {
-            string responseString = "";
+            var responseString = string.Empty;
 
             ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
@@ -380,7 +380,7 @@ namespace CP.VPOS.Banks.QNBFinansbank
 
         private string getUserMessage(string ErrorCode)
         {
-            string desc = "";
+            var desc = string.Empty;
 
             switch (ErrorCode)
             {
@@ -443,7 +443,7 @@ namespace CP.VPOS.Banks.QNBFinansbank
 
         private string getPrivateMessage(string ErrorCode)
         {
-            string desc = "";
+            var desc = string.Empty;
 
             switch (ErrorCode)
             {

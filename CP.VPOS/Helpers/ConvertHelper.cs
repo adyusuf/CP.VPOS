@@ -234,7 +234,7 @@ namespace CP.VPOS.Helpers
             string vVal = "'0'";
             try
             {
-                vVal = "'" + pText.ToString("HH:mm" + (pWithSecond ? ":ss" : "")) + "'";
+                vVal = "'" + pText.ToString("HH:mm" + (pWithSecond ? ":ss" : string.Empty)) + "'";
             }
             catch (Exception e)
             {
@@ -255,7 +255,7 @@ namespace CP.VPOS.Helpers
             string vVal = "0";
             try
             {
-                vVal = "'" + pText.ToString("yyyyMMdd HH:mm" + (pWithSecond ? ":ss" : "")) + "'";
+                vVal = "'" + pText.ToString("yyyyMMdd HH:mm" + (pWithSecond ? ":ss" : string.Empty)) + "'";
             }
             catch (Exception e)
             {
@@ -276,7 +276,7 @@ namespace CP.VPOS.Helpers
             string vVal = "0";
             try
             {
-                vVal = "\"" + pText.ToString("yyyy-MM-dd" + (pWithTime ? " HH:mm" + (pWithSecond ? ":ss" : "") : "")) + "\"";
+                vVal = "\"" + pText.ToString("yyyy-MM-dd" + (pWithTime ? " HH:mm" + (pWithSecond ? ":ss" : string.Empty) : string.Empty)) + "\"";
             }
             catch (Exception e)
             {
@@ -422,7 +422,7 @@ namespace CP.VPOS.Helpers
             bool vVal = false;
             try
             {
-                switch ("" + pText)
+                switch (string.Empty + pText)
                 {
                     case "1":
                         vVal = true;
@@ -474,7 +474,7 @@ namespace CP.VPOS.Helpers
         internal static string cpToString(this object pText)
         {
             lastError = null;
-            string vVal = "";
+            string vVal = string.Empty;
             try
             {
                 if (!(pText is DBNull))

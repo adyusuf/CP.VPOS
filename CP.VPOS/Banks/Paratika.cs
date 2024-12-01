@@ -198,7 +198,7 @@ namespace CP.VPOS.Banks.Paratika
             }
             else
             {
-                string errText = "";
+                string errText = string.Empty;
 
                 if (request.responseArray.ContainsKey("errorCode"))
                     errText = this.getErrorDesc(request.responseArray["errorCode"].cpToString());
@@ -301,7 +301,7 @@ namespace CP.VPOS.Banks.Paratika
 
         private SaleResponse Sale3D(SaleRequest request, VirtualPOSAuth auth)
         {
-            string sessionToken = "";
+            string sessionToken = string.Empty;
 
             SaleResponse response = new SaleResponse();
 
@@ -424,7 +424,7 @@ namespace CP.VPOS.Banks.Paratika
 
         private string Request(Dictionary<string, string> param, VirtualPOSAuth auth, string link = null)
         {
-            string responseString = "";
+            string responseString = string.Empty;
 
             ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
@@ -442,7 +442,7 @@ namespace CP.VPOS.Banks.Paratika
 
         private string getErrorDesc(string ErrCode)
         {
-            string desc = "";
+            string desc = string.Empty;
 
             switch (ErrCode)
             {

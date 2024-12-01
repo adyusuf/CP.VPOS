@@ -146,7 +146,7 @@ namespace CP.VPOS.Banks.YapiKrediBankasi
 
             if (oos["mdStatus"].ToString() != "1" && !(oos["mdStatus"].ToString() == "9" && auth.testPlatform))
             {
-                string message = "";
+                var message = string.Empty;
 
 
                 switch (oos["mdStatus"].ToString())
@@ -300,7 +300,7 @@ $@"<?xml version=""1.0"" encoding=""ISO-8859-9""?>
 
         private string Request(Dictionary<string, string> param, string link)
         {
-            string responseString = "";
+            var responseString = string.Empty;
             ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             System.Net.ServicePointManager.Expect100Continue = false;
@@ -375,7 +375,7 @@ $@"<?xml version=""1.0"" encoding=""ISO-8859-9""?>
 
         public static string ToYKBCurrency(this Currency? currency)
         {
-            string cr = "";
+            var cr = string.Empty;
 
             switch (currency)
             {

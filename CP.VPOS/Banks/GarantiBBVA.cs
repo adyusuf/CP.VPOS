@@ -511,7 +511,7 @@ namespace CP.VPOS.Banks.GarantiBBVA
 
         private string Request(Dictionary<string, string> param, string link)
         {
-            string responseString = "";
+            string responseString = string.Empty;
 
             ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };

@@ -295,7 +295,7 @@ namespace CP.VPOS.Banks.Denizbank
 
         private string Request(Dictionary<string, string> param, VirtualPOSAuth auth, string link = null)
         {
-            string responseString = "";
+            string responseString = string.Empty;
 
             ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };

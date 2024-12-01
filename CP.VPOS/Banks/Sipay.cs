@@ -104,7 +104,7 @@ namespace CP.VPOS.Banks.Sipay
 
             if (responseDic?.ContainsKey("status_code") == true && responseDic["status_code"].cpToString() == "100")
             {
-                string transactionId = "";
+                var transactionId = string.Empty;
 
                 try
                 {
@@ -684,7 +684,7 @@ namespace CP.VPOS.Banks.Sipay
 
         private string Request(Dictionary<string, object> param, string link, SipayTokenModel token = null)
         {
-            string responseString = "";
+            string responseString = string.Empty;
 
             try
             {
@@ -722,7 +722,7 @@ namespace CP.VPOS.Banks.Sipay
             var password = Sha1Hash(appSecret);
             var salt = Sha1Hash(mtRand.Next().ToString()).Substring(0, 4);
 
-            var saltWithPassword = "";
+            var saltWithPassword = string.Empty;
             using (var sha256Hash = SHA256.Create())
             {
                 saltWithPassword = GetHash(sha256Hash, password + salt);
@@ -750,7 +750,7 @@ namespace CP.VPOS.Banks.Sipay
                 var salt = mainStringArray[1];
                 var mainKey = mainStringArray[2];
 
-                var saltWithPassword = "";
+                var saltWithPassword = string.Empty;
                 using (var sha256Hash = SHA256.Create())
                 {
                     saltWithPassword = GetHash(sha256Hash, password + salt);

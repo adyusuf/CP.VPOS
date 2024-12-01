@@ -33,7 +33,7 @@ namespace CP.VPOS.Helpers
 
         internal static string toXml(this Dictionary<string, object> valuePairs, string rootTag = "CC5Request", string charset = "ISO-8859-9")
         {
-            string resp = "";
+            string resp = string.Empty;
 
             System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
@@ -117,7 +117,7 @@ namespace CP.VPOS.Helpers
 
         internal static string ToHtmlForm(this Dictionary<string, string> keyValuePairs, string link)
         {
-            string input = "";
+            string input = string.Empty;
 
             foreach (var item in keyValuePairs)
             {

@@ -66,7 +66,7 @@ namespace CP.VPOS.Infrastructures.Iyzico
         {
             if (list != null)
             {
-                String appendedValue = "";
+                var appendedValue = string.Empty;
                 foreach (RequestStringConvertible value in list)
                 {
                     appendedValue = appendedValue + value.ToPKIRequestString() + ", ";
@@ -80,7 +80,7 @@ namespace CP.VPOS.Infrastructures.Iyzico
         {
             if (list != null)
             {
-                String appendedValue = "";
+                var appendedValue = string.Empty;
                 foreach (int value in list)
                 {
                     appendedValue = appendedValue + value + ", ";

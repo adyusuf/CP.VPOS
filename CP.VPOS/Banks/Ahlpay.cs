@@ -44,7 +44,7 @@ namespace CP.VPOS.Banks.Ahlpay
                 return response;
             }
 
-            string totalStr = request.saleInfo.amount.ToString("N2", CultureInfo.GetCultureInfo("tr-TR")).Replace(".", "").Replace(",", ".");
+            string totalStr = request.saleInfo.amount.ToString("N2", CultureInfo.GetCultureInfo("tr-TR")).Replace(".", string.Empty).Replace(",", ".");
             string installmentStr = request.saleInfo.installment.ToString();
 
             string name = request.invoiceInfo?.name;
@@ -74,11 +74,11 @@ namespace CP.VPOS.Banks.Ahlpay
                 {"installmentCount", installmentStr },
                 {"currency", ((int)request.saleInfo.currency).ToString() },
                 {"orderId", request.orderNumber },
-                {"webUrl", "" },
+                {"webUrl", string.Empty },
                 {"description", $"{request.orderNumber} nolu sipariş ödemesi" },
                 {"requestIp", request.customerIPAddress },
                 {"rnd", _rnd },
-                {"hash", "" },
+                {"hash", string.Empty },
             };
 
             string hash_key = GenerateHash($"{auth.merchantStorekey}{_rnd}{request.orderNumber}{totalStr}{_token.merchantId}");
@@ -95,7 +95,7 @@ namespace CP.VPOS.Banks.Ahlpay
 
             if (responseDic?.ContainsKey("isSuccess") == true && responseDic["isSuccess"].cpToBool() == true)
             {
-                string transactionId = "";
+                string transactionId = string.Empty;
 
                 try
                 {
@@ -120,7 +120,7 @@ namespace CP.VPOS.Banks.Ahlpay
             {
                 string errorMsg = "İşlem sırasında bir hata oluştu";
 
-                if (responseDic?.ContainsKey("message") == true && responseDic["message"].cpToString() != "")
+                if (responseDic?.ContainsKey("message") == true && string.IsNullOrWhiteSpace(responseDic["message"].cpToString()))
                     errorMsg = responseDic["message"].cpToString();
 
                 response.statu = SaleResponseStatu.Error;
@@ -149,7 +149,7 @@ namespace CP.VPOS.Banks.Ahlpay
                 return response;
             }
 
-            string totalStr = request.saleInfo.amount.ToString("N2", CultureInfo.GetCultureInfo("tr-TR")).Replace(".", "").Replace(",", ".");
+            string totalStr = request.saleInfo.amount.ToString("N2", CultureInfo.GetCultureInfo("tr-TR")).Replace(".", string.Empty).Replace(",", ".");
             string installmentStr = request.saleInfo.installment.ToString();
 
             string name = request.invoiceInfo?.name;
@@ -179,11 +179,11 @@ namespace CP.VPOS.Banks.Ahlpay
                 {"installmentCount", installmentStr },
                 {"currency", ((int)request.saleInfo.currency).ToString() },
                 {"orderId", request.orderNumber },
-                {"webUrl", "" },
+                {"webUrl", string.Empty },
                 {"description", $"{request.orderNumber} nolu sipariş ödemesi" },
                 {"requestIp", request.customerIPAddress },
                 {"rnd", _rnd },
-                {"hash", "" },
+                {"hash", string.Empty },
                 {"okUrl", request.payment3D.returnURL },
                 {"failUrl", request.payment3D.returnURL },
             };
@@ -211,7 +211,7 @@ namespace CP.VPOS.Banks.Ahlpay
             {
                 string errorMsg = "İşlem sırasında bir hata oluştu";
 
-                if (responseDic?.ContainsKey("message") == true && responseDic["message"].cpToString() != "")
+                if (responseDic?.ContainsKey("message") == true && string.IsNullOrWhiteSpace(responseDic["message"].cpToString()))
                     errorMsg = responseDic["message"].cpToString();
 
                 response.statu = SaleResponseStatu.Error;
@@ -283,7 +283,7 @@ namespace CP.VPOS.Banks.Ahlpay
 
             string errorMsg = "Ahlpay token error";
 
-            if (loginDic?.ContainsKey("message") == true && loginDic["message"].cpToString() != "")
+            if (loginDic?.ContainsKey("message") == true && string.IsNullOrWhiteSpace(loginDic["message"].cpToString()))
                 errorMsg = errorMsg + " - " + loginDic["message"].cpToString();
 
             throw new Exception(errorMsg);
@@ -291,7 +291,7 @@ namespace CP.VPOS.Banks.Ahlpay
 
         private string Request(Dictionary<string, object> param, string link, AhlpayTokenModel token = null)
         {
-            string responseString = "";
+            string responseString = string.Empty;
 
             try
             {
@@ -321,13 +321,13 @@ namespace CP.VPOS.Banks.Ahlpay
 
         private string GenerateHash(string hashString)
         {
-            string hash = "";
+            string hash = string.Empty;
 
             using (SHA512 s512 = SHA512.Create())
             {
                 UnicodeEncoding ByteConverter = new UnicodeEncoding();
                 byte[] bytes = s512.ComputeHash(ByteConverter.GetBytes(hashString));
-                hash = BitConverter.ToString(bytes).Replace("-", "");
+                hash = BitConverter.ToString(bytes).Replace("-", string.Empty);
             }
 
             return hash;

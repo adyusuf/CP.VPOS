@@ -82,9 +82,9 @@ namespace CP.VPOS.Banks.ParamPos
 
 
             long resp_Islem_ID = respDic?.ContainsKey("Islem_ID") == true ? respDic["Islem_ID"].cpToLong() : 0;
-            string resp_UCD_HTML = respDic?.ContainsKey("UCD_HTML") == true ? respDic["UCD_HTML"].cpToString() : "";
+            string resp_UCD_HTML = respDic?.ContainsKey("UCD_HTML") == true ? respDic["UCD_HTML"].cpToString() : string.Empty;
             int resp_Sonuc = respDic?.ContainsKey("Sonuc") == true ? respDic["Sonuc"].cpToInt() : -1;
-            string resp_Sonuc_Str = respDic?.ContainsKey("Sonuc_Str") == true ? respDic["Sonuc_Str"].cpToString() : "";
+            string resp_Sonuc_Str = respDic?.ContainsKey("Sonuc_Str") == true ? respDic["Sonuc_Str"].cpToString() : string.Empty;
 
             response.privateResponse = respDic;
             response.transactionId = resp_Islem_ID.cpToString();
@@ -125,8 +125,8 @@ namespace CP.VPOS.Banks.ParamPos
 
             if (mdStatus == 1)
             {
-                string req_UCD_MD = request?.responseArray?.ContainsKey("md") == true ? request.responseArray["md"].cpToString() : "";
-                string req_Islem_GUID = request?.responseArray?.ContainsKey("islemGUID") == true ? request.responseArray["islemGUID"].cpToString() : "";
+                string req_UCD_MD = request?.responseArray?.ContainsKey("md") == true ? request.responseArray["md"].cpToString() : string.Empty;
+                string req_Islem_GUID = request?.responseArray?.ContainsKey("islemGUID") == true ? request.responseArray["islemGUID"].cpToString() : string.Empty;
 
                 string xml = $@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:tur=""https://turkpos.com.tr/"">
    <soapenv:Header/>
@@ -151,7 +151,7 @@ namespace CP.VPOS.Banks.ParamPos
 
                 int resp_Sonuc = respDic?.ContainsKey("Sonuc") == true ? respDic["Sonuc"].cpToInt() : -1;
                 long resp_Dekont_ID = respDic?.ContainsKey("Dekont_ID") == true ? respDic["Dekont_ID"].cpToLong() : 0;
-                string resp_Sonuc_Ack = respDic?.ContainsKey("Sonuc_Ack") == true ? respDic["Sonuc_Ack"].cpToString() : "";
+                string resp_Sonuc_Ack = respDic?.ContainsKey("Sonuc_Ack") == true ? respDic["Sonuc_Ack"].cpToString() : string.Empty;
 
                 response.transactionId = resp_Dekont_ID.cpToString();
 
@@ -202,7 +202,7 @@ namespace CP.VPOS.Banks.ParamPos
             Dictionary<string, object> respDic = FoundationHelper.XmltoDictionary(resp, "/*[local-name()='Envelope']/*[local-name()='Body']/*[local-name()='TP_Islem_Iptal_Iade_Kismi2Response']/*[local-name()='TP_Islem_Iptal_Iade_Kismi2Result']");
 
             int resp_Sonuc = respDic?.ContainsKey("Sonuc") == true ? respDic["Sonuc"].cpToInt() : -1;
-            string resp_Sonuc_Str = respDic?.ContainsKey("Sonuc_Str") == true ? respDic["Sonuc_Str"].cpToString() : "";
+            string resp_Sonuc_Str = respDic?.ContainsKey("Sonuc_Str") == true ? respDic["Sonuc_Str"].cpToString() : string.Empty;
 
 
             response.statu = resp_Sonuc > 0 ? ResponseStatu.Success : ResponseStatu.Error;
@@ -244,7 +244,7 @@ namespace CP.VPOS.Banks.ParamPos
             Dictionary<string, object> respDic = FoundationHelper.XmltoDictionary(resp, "/*[local-name()='Envelope']/*[local-name()='Body']/*[local-name()='TP_Islem_Iptal_Iade_Kismi2Response']/*[local-name()='TP_Islem_Iptal_Iade_Kismi2Result']");
 
             int resp_Sonuc = respDic?.ContainsKey("Sonuc") == true ? respDic["Sonuc"].cpToInt() : -1;
-            string resp_Sonuc_Str = respDic?.ContainsKey("Sonuc_Str") == true ? respDic["Sonuc_Str"].cpToString() : "";
+            string resp_Sonuc_Str = respDic?.ContainsKey("Sonuc_Str") == true ? respDic["Sonuc_Str"].cpToString() : string.Empty;
 
 
             response.statu = resp_Sonuc > 0 ? ResponseStatu.Success : ResponseStatu.Error;
@@ -291,7 +291,7 @@ namespace CP.VPOS.Banks.ParamPos
 
         private string GetBINSanalPOS_ID(string binNumber, VirtualPOSAuth auth)
         {
-            string sanalpos_ID = "";
+            string sanalpos_ID = string.Empty;
 
             string xml = $@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:tur=""https://turkpos.com.tr/"">
    <soapenv:Header/>
